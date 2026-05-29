@@ -22,13 +22,46 @@ function getStageQuestions(stageId) {
   return questions.filter((question) => question.stage === stageId);
 }
 
+function shuffleItems(items) {
+  const shuffled = [...items];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function shuffleQuestionChoices(question) {
+  const shuffledChoices = shuffleItems(
+    question.choices.map((choice, index) => ({
+      choice,
+      explanation: question.choiceExplanations?.[index],
+      isCorrect: index === question.answer,
+    })),
+  );
+
+  return {
+    ...question,
+    choices: shuffledChoices.map((item) => item.choice),
+    answer: shuffledChoices.findIndex((item) => item.isCorrect),
+    choiceExplanations: question.choiceExplanations ? shuffledChoices.map((item) => item.explanation) : undefined,
+  };
+}
+
+function createStageQuestionSet(stageId) {
+  return shuffleItems(getStageQuestions(stageId)).map((question) => shuffleQuestionChoices(question));
+}
+
 function createBattleState(stageId) {
-  const stageQuestions = getStageQuestions(stageId);
+  const stageQuestions = createStageQuestionSet(stageId);
   const firstQuestion = stageQuestions[0];
   const firstEnemy = enemyArt[firstQuestion.enemy];
 
   return {
     stageId,
+    questions: stageQuestions,
     questionIndex: 0,
     playerHp: PLAYER_MAX_HP,
     enemyHp: firstEnemy.maxHp,
@@ -62,8 +95,7 @@ export default function App() {
 
   function answerQuestion(answerIndex) {
     setBattle((current) => {
-      const stageQuestions = getStageQuestions(current.stageId);
-      const question = stageQuestions[current.questionIndex];
+      const question = current.questions[current.questionIndex];
       const isCorrect = answerIndex === question.answer;
       const nextEnemyHp = isCorrect ? Math.max(0, current.enemyHp - CORRECT_DAMAGE) : current.enemyHp;
       const nextPlayerHp = isCorrect ? current.playerHp : Math.max(0, current.playerHp - WRONG_DAMAGE);
@@ -81,7 +113,7 @@ export default function App() {
   }
 
   function goToNextQuestion() {
-    const stageQuestions = getStageQuestions(battle.stageId);
+    const stageQuestions = battle.questions;
     const answered = battle.questionIndex + 1;
     const isStageFinished = answered >= stageQuestions.length;
 
@@ -147,7 +179,7 @@ export default function App() {
     );
   }
 
-  const stageQuestions = getStageQuestions(battle.stageId);
+  const stageQuestions = battle.questions;
   const currentQuestion = stageQuestions[battle.questionIndex];
   const currentEnemy = enemyArt[currentQuestion.enemy];
   const currentStage = stages.find((stage) => stage.id === battle.stageId);
