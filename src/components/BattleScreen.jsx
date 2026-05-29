@@ -36,6 +36,8 @@ export default function BattleScreen({
           selectedAnswer={selectedAnswer}
           isAnswered={isAnswered}
           onAnswer={onAnswer}
+          onNext={onNext}
+          isLastQuestion={progress === total}
         />
         {isAnswered && (
           <ResultPanel

@@ -393,6 +393,10 @@ button {
   font-weight: 900;
 }
 
+.choice__next {
+  display: none;
+}
+
 .choice:disabled {
   cursor: default;
 }
@@ -426,7 +430,11 @@ button {
   color: #8d1f1f;
 }
 
-.choice:disabled .choice__feedback {
+.choice:not(button) {
+  cursor: default;
+}
+
+.choice:not(button) .choice__feedback {
   display: block;
 }
 
@@ -652,6 +660,26 @@ button {
     height: 34px;
   }
 
+  .choice__next {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 8px;
+    border: 0;
+    border-radius: 8px;
+    padding: 7px 12px;
+    background: #f08c00;
+    color: #141414;
+    box-shadow: 0 8px 14px rgba(28, 22, 8, 0.16);
+    cursor: pointer;
+    font-size: 0.92rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
   .battlefield {
     grid-template-columns: 1fr 1fr;
     align-items: center;
@@ -677,6 +705,7 @@ button {
   }
 
   .result-panel {
+    display: none;
     grid-template-columns: 1fr;
     padding: 14px;
   }

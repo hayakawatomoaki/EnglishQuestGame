@@ -9,6 +9,8 @@ export default function Choices({
   choiceExplanations,
   isAnswered,
   onAnswer,
+  onNext,
+  isLastQuestion,
 }) {
   return (
     <div className="choices">
@@ -24,9 +26,8 @@ export default function Choices({
           : "choice";
 
         const feedback = isCorrect ? explanation : choiceExplanations?.[index] || DEFAULT_WRONG_REASON;
-
-        return (
-          <button className={stateClass} type="button" key={choice} disabled={isAnswered} onClick={() => onAnswer(index)}>
+        const content = (
+          <>
             <span className="choice__letter">{String.fromCharCode(65 + index)}</span>
             <span className="choice__body">
               <span className="choice__text">{choice}</span>
@@ -36,7 +37,27 @@ export default function Choices({
                   {feedback}
                 </span>
               )}
+              {isAnswered && isCorrect && (
+                <button className="choice__next" type="button" onClick={onNext}>
+                  {isLastQuestion ? "Clear" : "Next"}
+                  <span aria-hidden="true">›</span>
+                </button>
+              )}
             </span>
+          </>
+        );
+
+        if (isAnswered) {
+          return (
+            <div className={stateClass} key={choice}>
+              {content}
+            </div>
+          );
+        }
+
+        return (
+          <button className={stateClass} type="button" key={choice} onClick={() => onAnswer(index)}>
+            {content}
           </button>
         );
       })}

@@ -1,6 +1,6 @@
 import Choices from "./Choices.jsx";
 
-export default function QuestionPanel({ question, selectedAnswer, isAnswered, onAnswer }) {
+export default function QuestionPanel({ question, selectedAnswer, isAnswered, onAnswer, onNext, isLastQuestion }) {
   return (
     <section className="question-panel">
       <p className="eyebrow">Question</p>
@@ -13,6 +13,8 @@ export default function QuestionPanel({ question, selectedAnswer, isAnswered, on
         choiceExplanations={question.choiceExplanations}
         isAnswered={isAnswered}
         onAnswer={onAnswer}
+        onNext={onNext}
+        isLastQuestion={isLastQuestion}
       />
     </section>
   );
